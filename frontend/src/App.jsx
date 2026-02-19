@@ -8,7 +8,6 @@ import { Button } from './components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card'
 import { Input } from './components/ui/input'
 import { Textarea } from './components/ui/textarea'
-import type { GeneratePayload, Materia, TeacherDraft } from './types'
 
 const quickTopics = [
   'La Guerra Civil Española',
@@ -23,7 +22,7 @@ const quickProfiles = [
 ]
 
 function App() {
-  const [draft, setDraft] = useState<TeacherDraft>({
+  const [draft, setDraft] = useState({
     tema: quickTopics[0],
     materia: 'Historia',
     perfil_alumnos: quickProfiles[0],
@@ -31,19 +30,19 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [resultado, setResultado] = useState('')
   const [error, setError] = useState('')
-  const [lastPayload, setLastPayload] = useState<GeneratePayload | null>(null)
-  const [history, setHistory] = useState<GeneratePayload[]>([])
+  const [lastPayload, setLastPayload] = useState(null)
+  const [history, setHistory] = useState([])
 
   const canSubmit = useMemo(
     () => draft.tema.trim().length >= 3 && draft.perfil_alumnos.trim().length >= 5,
     [draft],
   )
 
-  const updateField = <K extends keyof TeacherDraft>(key: K, value: TeacherDraft[K]) => {
+  const updateField = (key, value) => {
     setDraft((prev) => ({ ...prev, [key]: value }))
   }
 
-  const normalizeError = (message: string) => {
+  const normalizeError = (message) => {
     try {
       const parsed = JSON.parse(message)
       if (parsed?.detail) return String(parsed.detail)
@@ -58,7 +57,7 @@ function App() {
     setError('')
     setResultado('')
 
-    const payload: GeneratePayload = {
+    const payload = {
       tema: draft.tema.trim(),
       materia: draft.materia,
       perfil_alumnos: draft.perfil_alumnos.trim(),
@@ -128,7 +127,7 @@ function App() {
                   id="materia"
                   className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
                   value={draft.materia}
-                  onChange={(e) => updateField('materia', e.target.value as Materia)}
+                  onChange={(e) => updateField('materia', e.target.value)}
                 >
                   <option>Historia</option>
                   <option>Literatura</option>

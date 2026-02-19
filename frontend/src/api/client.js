@@ -1,8 +1,6 @@
-import type { GeneratePayload, GenerateResponse } from '../types'
-
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8000'
 
-export async function generateGuide(payload: GeneratePayload): Promise<GenerateResponse> {
+export async function generateGuide(payload) {
     const response = await fetch(`${API_BASE_URL}/api/v1/generate`, {
         method: 'POST',
         headers: {
@@ -16,5 +14,5 @@ export async function generateGuide(payload: GeneratePayload): Promise<GenerateR
         throw new Error(text || 'No fue posible generar la ficha docente.')
     }
 
-    return response.json() as Promise<GenerateResponse>
+    return response.json()
 }

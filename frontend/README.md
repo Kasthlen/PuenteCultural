@@ -9,7 +9,7 @@ El frontend consume la API del backend en `POST /api/v1/generate` y muestra el r
 
 ## Stack
 
-- React 19 + TypeScript
+- React 19 + JavaScript
 - Vite
 - Tailwind CSS
 - Componentes UI ligeros (`class-variance-authority`, `clsx`, `tailwind-merge`)
@@ -80,10 +80,9 @@ npm run dev -- --host 127.0.0.1 --port 5173
 
 ## Estructura principal
 
-- `src/App.tsx`: pantalla principal para solicitud docente, resultado y historial.
-- `src/api/client.ts`: cliente HTTP hacia el backend.
+- `src/App.jsx`: pantalla principal para solicitud docente, resultado y historial.
+- `src/api/client.js`: cliente HTTP hacia el backend.
 - `src/components/ui/*`: componentes base reutilizables.
-- `src/types.ts`: tipos de payload/respuesta.
 
 ## Solución de problemas
 
