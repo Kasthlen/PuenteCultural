@@ -1,9 +1,9 @@
-// En producción (DigitalOcean con rutas configuradas), usamos la misma URL base
-const API_BASE_URL = import.meta.env.VITE_API_URL || window.location.origin
+// En desarrollo usamos el servidor local de python, en producción usamos rutas relativas
+// para evitar problemas con variables mal configuradas en DigitalOcean.
+const isDev = import.meta.env.DEV
+const API_BASE_URL = isDev ? 'http://127.0.0.1:8000' : ''
 
 export async function generateGuide(payload) {
-    // Si API_BASE_URL ya incluye '/api', no lo duplicamos. 
-    // Pero según tu configuración de DO, el prefijo es /api
     const url = `${API_BASE_URL}/api/v1/generate`
 
     const response = await fetch(url, {
