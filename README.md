@@ -24,8 +24,9 @@ Interfaz disponible en `http://127.0.0.1:5180`.
 	- OpenAI: `MODEL=gpt-4o-mini` + `OPENAI_API_KEY=...`
 	- Gemini: `MODEL=gemini/gemini-2.0-flash` + `GOOGLE_API_KEY=...`
 	- Anthropic: `MODEL=anthropic/claude-3-5-haiku-latest` + `ANTHROPIC_API_KEY=...`
-	- GitHub Models: `MODEL=github/gpt-4.1-mini` + `GITHUB_TOKEN=...`
+	- GitHub Models: `MODEL=github/gpt-4.1-mini` + `GITHUB_API_KEY=...` o `GITHUB_TOKEN=...`
 	  (opcional explícito: `LLM_BASE_URL=https://models.inference.ai.azure.com`)
+	- Si cambiaste a OpenAI pero el `MODEL` sigue en `github/...`, el backend seguirá intentando autenticar contra GitHub Models.
 4. Instala dependencias:
 	- `pip install -r backend/requirements.txt`
 5. Ejecuta prueba:
@@ -84,3 +85,13 @@ Puertos:
 - Backend (smoke check):
 	- `cd backend`
 	- `.\venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000`
+
+## DigitalOcean App Platform
+
+El repositorio incluye [.do/app.yaml](.do/app.yaml) para dejar documentada la topología de despliegue.
+
+- Conecta este repo a la app de DigitalOcean una sola vez.
+- Mantén activado `deploy_on_push` en `main`.
+- Configura en DigitalOcean las variables reales del backend: `LLM_MODE`, `MODEL`, `OPENAI_API_KEY` o la credencial del proveedor que uses, y `MONGODB_URI` si aplica.
+- El frontend usa rutas relativas en producción, así que las llamadas van a `/api/v1/...` sin depender de una URL hardcoded.
+- A partir de ahí, cada commit a `main` dispara un nuevo despliegue.

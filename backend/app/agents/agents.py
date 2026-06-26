@@ -56,7 +56,11 @@ class PuenteCulturalAgents:
             return api_key or None, explicit_base_url or None
 
         if model_lower.startswith("github/"):
-            api_key = PuenteCulturalAgents._clean_env(os.getenv("GITHUB_TOKEN"))
+            api_key = (
+                PuenteCulturalAgents._clean_env(os.getenv("GITHUB_API_KEY"))
+                or PuenteCulturalAgents._clean_env(os.getenv("GITHUB_TOKEN"))
+                or PuenteCulturalAgents._clean_env(os.getenv("GH_TOKEN"))
+            )
             base_url = explicit_base_url or "https://models.inference.ai.azure.com"
             return api_key or None, base_url
 

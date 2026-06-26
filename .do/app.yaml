@@ -1,0 +1,39 @@
+name: puente-cultural
+region: nyc
+ingress:
+  rules:
+    - match:
+        path:
+          prefix: /api/v1
+      component:
+        name: backend
+        preserve_path_prefix: true
+    - match:
+        path:
+          prefix: /
+      component:
+        name: frontend
+
+services:
+  - name: backend
+    github:
+      repo: Kasthlen/PuenteCultural
+      branch: main
+      deploy_on_push: true
+    source_dir: backend
+    dockerfile_path: Dockerfile
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 8080
+    health_check:
+      http_path: /health
+
+static_sites:
+  - name: frontend
+    github:
+      repo: Kasthlen/PuenteCultural
+      branch: main
+      deploy_on_push: true
+    source_dir: frontend
+    build_command: npm ci && npm run build
+    output_dir: dist
