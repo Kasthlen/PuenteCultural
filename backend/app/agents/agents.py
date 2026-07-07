@@ -40,7 +40,10 @@ class PuenteCulturalAgents:
 
     @staticmethod
     def _resolve_llm_config(model_name: str):
-        explicit_api_key = PuenteCulturalAgents._clean_env(os.getenv("LLM_API_KEY"))
+        explicit_api_key = (
+            PuenteCulturalAgents._clean_env(os.getenv("LLM_API_KEY"))
+            or PuenteCulturalAgents._clean_env(os.getenv("OpenIaPuenteCultural"))
+        )
         explicit_base_url = PuenteCulturalAgents._clean_env(os.getenv("LLM_BASE_URL"))
         if explicit_api_key:
             return explicit_api_key, explicit_base_url or None
@@ -64,7 +67,10 @@ class PuenteCulturalAgents:
             base_url = explicit_base_url or "https://models.inference.ai.azure.com"
             return api_key or None, base_url
 
-        api_key = PuenteCulturalAgents._clean_env(os.getenv("OPENAI_API_KEY"))
+        api_key = (
+            PuenteCulturalAgents._clean_env(os.getenv("OPENAI_API_KEY"))
+            or PuenteCulturalAgents._clean_env(os.getenv("OpenIaPuenteCultural"))
+        )
         base_url = explicit_base_url or PuenteCulturalAgents._clean_env(os.getenv("OPENAI_BASE_URL"))
         return api_key or None, base_url or None
 

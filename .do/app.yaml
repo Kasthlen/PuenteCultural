@@ -27,6 +27,18 @@ services:
     http_port: 8080
     health_check:
       http_path: /health
+    envs:
+      - key: LLM_MODE
+        value: api
+      - key: FALLBACK_MODE
+        value: raise
+      - key: MODEL
+        value: gpt-4o-mini
+      - key: TEMPERATURE
+        value: 0.5
+      - key: OpenIaPuenteCultural
+        scope: RUN_TIME
+        type: SECRET
 
 static_sites:
   - name: frontend
