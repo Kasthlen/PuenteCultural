@@ -62,7 +62,19 @@ class GeneradorContenidoCrew:
         except Exception as error:
             error_texto = str(error).lower()
             if self.fallback_mode == "rules" and any(
-                clave in error_texto for clave in ["429", "quota", "model_not_found", "resource_exhausted", "api key"]
+                clave in error_texto
+                for clave in [
+                    "429",
+                    "quota",
+                    "model_not_found",
+                    "resource_exhausted",
+                    "api key",
+                    "authenticationerror",
+                    "unauthorized",
+                    "bad credentials",
+                    "invalid api key",
+                    "incorrect api key",
+                ]
             ):
                 return self.free_engine.generate(self.tema, self.materia, self.perfil_alumnos)
             raise

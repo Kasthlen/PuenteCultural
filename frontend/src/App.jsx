@@ -1,7 +1,9 @@
-import { useMemo, useState, useEffect } from 'react'
-import { BookOpenCheck, ClipboardCheck, LoaderCircle, Sparkles, Download, FileText, Moon, Sun } from 'lucide-react'
+import { useMemo, useState, useEffect, useRef } from 'react'
+import { BookOpenCheck, ClipboardCheck, LoaderCircle, Sparkles, Download, FileText, Moon, Sun, FileDown } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 
 import { generateGuide } from './api/client'
 import { Button } from './components/ui/button'
@@ -50,6 +52,7 @@ function App() {
   const [error, setError] = useState('')
   const [lastPayload, setLastPayload] = useState(null)
   const [history, setHistory] = useState([])
+  const pdfRef = useRef(null)
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -69,7 +72,7 @@ function App() {
     setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'))
   }
 
-  // Lógica de descarga
+  // Lógica de descarga Markdown
   const downloadFicha = () => {
     if (!resultado) return;
     const element = document.createElement("a");
@@ -79,6 +82,49 @@ function App() {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+  };
+
+  // Lógica de exportación PDF
+  const downloadPDF = async () => {
+    if (!pdfRef.current || !resultado) return;
+    
+    try {
+      const element = pdfRef.current;
+      
+      // Configuración de html2canvas para mejor calidad
+      const canvas = await html2canvas(element, {
+        scale: 2, // Mejor calidad
+        useCORS: true,
+        logging: false,
+        backgroundColor: theme === 'dark' ? '#0f172a' : '#ffffff'
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+      
+      // Añadir la primera página
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+      
+      // Añadir páginas adicionales si el contenido es largo
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      
+      pdf.save(`Ficha_PuenteCultural_${draft.tema.replace(/\s+/g, '_')}.pdf`);
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      setError('Error al generar el PDF. Por favor, intenta de nuevo.');
+    }
   };
 
   const onGenerate = async () => {
@@ -283,12 +329,15 @@ function App() {
                         Copiar Texto
                       </Button>
                       <Button variant="default" size="sm" onClick={downloadFicha} className="bg-green-600 hover:bg-green-700">
-                        <Download size={16} className="mr-2" /> Descargar Ficha
+                        <Download size={16} className="mr-2" /> Markdown
+                      </Button>
+                      <Button variant="default" size="sm" onClick={downloadPDF} className="bg-red-600 hover:bg-red-700">
+                        <FileDown size={16} className="mr-2" /> PDF
                       </Button>
                     </div>
                   </div>
 
-                  <div className="prose prose-blue prose-lg max-w-none bg-white p-8 rounded-xl shadow-md border border-slate-200 dark:prose-invert dark:bg-slate-900 dark:border-slate-700">
+                  <div ref={pdfRef} className="prose prose-blue prose-lg max-w-none bg-white p-8 rounded-xl shadow-md border border-slate-200 dark:prose-invert dark:bg-slate-900 dark:border-slate-700">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {resultado}
                     </ReactMarkdown>
