@@ -30,13 +30,16 @@ services:
     envs:
       - key: LLM_MODE
         value: api
-      - key: FALLBACK_MODE
-        value: raise
       - key: MODEL
-        value: gpt-4o-mini
+        value: github/gpt-4o-mini
+      - key: FALLBACK_MODEL
+        value: gemini/gemini-2.0-flash
       - key: TEMPERATURE
         value: 0.5
-      - key: OpenIaPuenteCultural
+      - key: GithubPuenteCultural
+        scope: RUN_TIME
+        type: SECRET
+      - key: GeminiPuenteCultural
         scope: RUN_TIME
         type: SECRET
 
