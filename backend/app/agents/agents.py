@@ -2,8 +2,8 @@ from crewai import Agent, LLM
 import os
 from dotenv import load_dotenv
 
-# Cargar variables de entorno
-load_dotenv()
+# Cargar variables de entorno (solo si existe archivo .env, usar env vars del sistema)
+load_dotenv(override=False)
 
 class PuenteCulturalAgents:
     def __init__(self):
@@ -16,8 +16,17 @@ class PuenteCulturalAgents:
         model_name = self._clean_env(os.getenv("MODEL", "github/gpt-4o-mini"))
         temperature = float(self._clean_env(os.getenv("TEMPERATURE", "0.5")))
 
+        # Debug: imprimir variables disponibles
+        print(f"DEBUG: LLM_MODE={llm_mode}")
+        print(f"DEBUG: MODEL={model_name}")
+        print(f"DEBUG: GithubPuenteCultural exists: {bool(os.getenv('GithubPuenteCultural'))}")
+        print(f"DEBUG: GITHUB_API_KEY exists: {bool(os.getenv('GITHUB_API_KEY'))}")
+        print(f"DEBUG: GITHUB_TOKEN exists: {bool(os.getenv('GITHUB_TOKEN'))}")
+        print(f"DEBUG: GH_TOKEN exists: {bool(os.getenv('GH_TOKEN'))}")
+
         api_key, base_url = self._resolve_llm_config(model_name)
         if not api_key:
+            print(f"DEBUG: No API key found. Available env vars: {[k for k in os.environ.keys() if 'GITHUB' in k or 'Github' in k]}")
             raise ValueError(
                 "No se encontró API key para ejecutar LLM real. "
                 "Configura GithubPuenteCultural o GITHUB_API_KEY para GitHub Models."
