@@ -21,12 +21,10 @@ Interfaz disponible en `http://127.0.0.1:5180`.
 	- `LLM_MODE=api`
 	- `FALLBACK_MODE=raise`
 3. Elige modelo y proveedor:
-	- OpenAI: `MODEL=gpt-4o-mini` + `OPENAI_API_KEY=...`
+	- GitHub Models (Recomendado - Gratis): `MODEL=github/gpt-4o-mini` + `GITHUB_API_KEY=...` o `GITHUB_TOKEN=...`
 	- Gemini: `MODEL=gemini/gemini-2.0-flash` + `GOOGLE_API_KEY=...`
 	- Anthropic: `MODEL=anthropic/claude-3-5-haiku-latest` + `ANTHROPIC_API_KEY=...`
-	- GitHub Models: `MODEL=github/gpt-4.1-mini` + `GITHUB_API_KEY=...` o `GITHUB_TOKEN=...`
-	  (opcional explícito: `LLM_BASE_URL=https://models.inference.ai.azure.com`)
-	- Si cambiaste a OpenAI pero el `MODEL` sigue en `github/...`, el backend seguirá intentando autenticar contra GitHub Models.
+	- Configuración de fallback: `FALLBACK_MODEL=gemini/gemini-2.0-flash` (automático si GitHub falla)
 4. Instala dependencias:
 	- `pip install -r backend/requirements.txt`
 5. Ejecuta prueba:
@@ -92,6 +90,6 @@ El repositorio incluye [.do/app.yaml](.do/app.yaml) para dejar documentada la to
 
 - Conecta este repo a la app de DigitalOcean una sola vez.
 - Mantén activado `deploy_on_push` en `main`.
-- Configura en DigitalOcean las variables reales del backend: `LLM_MODE`, `MODEL`, `OPENAI_API_KEY` o la credencial del proveedor que uses, y `MONGODB_URI` si aplica.
+- Configura en DigitalOcean las variables reales del backend: `LLM_MODE`, `MODEL`, `FALLBACK_MODEL`, `GithubPuenteCultural`, `GeminiPuenteCultural` (para producción).
 - El frontend usa rutas relativas en producción, así que las llamadas van a `/api/v1/...` sin depender de una URL hardcoded.
 - A partir de ahí, cada commit a `main` dispara un nuevo despliegue.
