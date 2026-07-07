@@ -32,14 +32,9 @@ services:
         value: api
       - key: MODEL
         value: github/gpt-4o-mini
-      - key: FALLBACK_MODEL
-        value: gemini/gemini-2.0-flash
       - key: TEMPERATURE
         value: 0.5
       - key: GithubPuenteCultural
-        scope: RUN_TIME
-        type: SECRET
-      - key: GeminiPuenteCultural
         scope: RUN_TIME
         type: SECRET
 

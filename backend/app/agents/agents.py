@@ -12,37 +12,19 @@ class PuenteCulturalAgents:
             self.llm = None
             return
 
-        # Configurar modelo principal y fallback
-        primary_model = self._clean_env(os.getenv("MODEL", "github/gpt-4o-mini"))
-        fallback_model = self._clean_env(os.getenv("FALLBACK_MODEL", "gemini/gemini-2.0-flash"))
+        # Solo GitHub Models como proveedor
+        model_name = self._clean_env(os.getenv("MODEL", "github/gpt-4o-mini"))
         temperature = float(self._clean_env(os.getenv("TEMPERATURE", "0.5")))
 
-        # Intentar con modelo principal primero
-        api_key, base_url = self._resolve_llm_config(primary_model)
-        if api_key:
-            try:
-                llm_params = {
-                    "model": primary_model,
-                    "temperature": temperature,
-                    "api_key": api_key,
-                }
-                if base_url:
-                    llm_params["base_url"] = base_url
-                self.llm = LLM(**llm_params)
-                return
-            except Exception as e:
-                print(f"Error con modelo principal {primary_model}: {e}")
-
-        # Fallback al modelo secundario
-        api_key, base_url = self._resolve_llm_config(fallback_model)
+        api_key, base_url = self._resolve_llm_config(model_name)
         if not api_key:
             raise ValueError(
                 "No se encontró API key para ejecutar LLM real. "
-                "Configura LLM_API_KEY o la key del proveedor (GitHub Models/Gemini)."
+                "Configura GithubPuenteCultural o GITHUB_API_KEY para GitHub Models."
             )
 
         llm_params = {
-            "model": fallback_model,
+            "model": model_name,
             "temperature": temperature,
             "api_key": api_key,
         }
@@ -66,18 +48,7 @@ class PuenteCulturalAgents:
 
         model_lower = model_name.lower()
 
-        if model_lower.startswith("gemini/"):
-            api_key = (
-                PuenteCulturalAgents._clean_env(os.getenv("GeminiPuenteCultural"))
-                or PuenteCulturalAgents._clean_env(os.getenv("GEMINI_API_KEY"))
-                or PuenteCulturalAgents._clean_env(os.getenv("GOOGLE_API_KEY"))
-            )
-            return api_key or None, explicit_base_url or None
-
-        if model_lower.startswith("anthropic/") or model_lower.startswith("claude"):
-            api_key = PuenteCulturalAgents._clean_env(os.getenv("ANTHROPIC_API_KEY"))
-            return api_key or None, explicit_base_url or None
-
+        # Solo soportamos GitHub Models
         if model_lower.startswith("github/"):
             api_key = (
                 PuenteCulturalAgents._clean_env(os.getenv("GithubPuenteCultural"))
@@ -88,7 +59,7 @@ class PuenteCulturalAgents:
             base_url = explicit_base_url or "https://models.inference.ai.azure.com"
             return api_key or None, base_url
 
-        # Solo soportamos GitHub Models y Gemini, no OpenAI
+        # No soportamos otros proveedores
         return None, None
 
     def agente_historia(self):

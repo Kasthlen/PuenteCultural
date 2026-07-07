@@ -19,12 +19,9 @@ Interfaz disponible en `http://127.0.0.1:5180`.
 1. Copia `backend/.env.example` a `backend/.env`.
 2. Configura modo real:
 	- `LLM_MODE=api`
-	- `FALLBACK_MODE=raise`
 3. Elige modelo y proveedor:
 	- GitHub Models (Recomendado - Gratis): `MODEL=github/gpt-4o-mini` + `GITHUB_API_KEY=...` o `GITHUB_TOKEN=...`
-	- Gemini: `MODEL=gemini/gemini-2.0-flash` + `GOOGLE_API_KEY=...`
-	- Anthropic: `MODEL=anthropic/claude-3-5-haiku-latest` + `ANTHROPIC_API_KEY=...`
-	- Configuración de fallback: `FALLBACK_MODEL=gemini/gemini-2.0-flash` (automático si GitHub falla)
+	- GitHub Models (Alternativa): `MODEL=github/gpt-4.1-mini`
 4. Instala dependencias:
 	- `pip install -r backend/requirements.txt`
 5. Ejecuta prueba:
@@ -33,12 +30,8 @@ Interfaz disponible en `http://127.0.0.1:5180`.
 
 ## Modos disponibles
 
-- `LLM_MODE=api`: usa CrewAI + LLM real.
-- `LLM_MODE=rules`: usa motor local por reglas (solo fallback local, sin API).
-
-`FALLBACK_MODE` controla qué pasa en errores de API cuando `LLM_MODE=api`:
-- `raise` (recomendado para desarrollo real): falla explícitamente.
-- `rules`: cae al modo local por reglas.
+- `LLM_MODE=api`: usa CrewAI + LLM real (GitHub Models).
+- `LLM_MODE=rules`: usa motor local por reglas (sin API).
 
 ## Levantar backend + frontend
 
@@ -90,6 +83,6 @@ El repositorio incluye [.do/app.yaml](.do/app.yaml) para dejar documentada la to
 
 - Conecta este repo a la app de DigitalOcean una sola vez.
 - Mantén activado `deploy_on_push` en `main`.
-- Configura en DigitalOcean las variables reales del backend: `LLM_MODE`, `MODEL`, `FALLBACK_MODEL`, `GithubPuenteCultural`, `GeminiPuenteCultural` (para producción).
+- Configura en DigitalOcean las variables reales del backend: `LLM_MODE`, `MODEL`, `GithubPuenteCultural` (para producción).
 - El frontend usa rutas relativas en producción, así que las llamadas van a `/api/v1/...` sin depender de una URL hardcoded.
 - A partir de ahí, cada commit a `main` dispara un nuevo despliegue.
